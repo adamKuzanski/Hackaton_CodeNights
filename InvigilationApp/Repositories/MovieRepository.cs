@@ -62,5 +62,25 @@ namespace InvigilationApp.Repositories
 
             return Task.FromResult<IList<FrameStats>>(stats);
         }
+
+        public async Task<List<string>> GetAllMovieNames()
+        {
+            var storageAccount = CloudStorageAccount.Parse(ConnectionString);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var cloudBlobContainer = blobClient.GetContainerReference(BlobContainer);
+
+            BlobContinuationToken continuationToken = null; //start at the beginning
+            var results = new List<IListBlobItem>();
+            do
+            {
+                var response = await cloudBlobContainer.ListBlobsSegmentedAsync(continuationToken);
+                continuationToken = response.ContinuationToken;
+                results.AddRange(response.Results);
+            }
+
+            while (continuationToken != null); //when this is null again, we've reached the end
+
+            return results.Cast<CloudBlockBlob>().Select(b => b.Name).ToList();
+        }
     }
 }

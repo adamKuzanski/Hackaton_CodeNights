@@ -69,6 +69,25 @@ namespace InvigilationApp.Controllers
             }
         }
 
+        [HttpGet("allNames")]
+        public async Task<IActionResult> GetAllMovieNames()
+        {
+            var namesList = await _movieRepository.GetAllMovieNames();
+
+            string message;
+            var result = true;
+            if (result)
+            {
+                message = $"OK: Stats sent";
+                return Ok(namesList);
+            }
+            else
+            {
+                message = $"You FUCKED UP";
+                return BadRequest(namesList);
+            }
+        }
+
 
     }
 }
