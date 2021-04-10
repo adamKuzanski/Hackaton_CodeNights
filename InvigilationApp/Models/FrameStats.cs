@@ -12,7 +12,7 @@ namespace InvigilationApp.Models
         public int NbOfPeopleWithOutMask { get; set; }
         public int NbOfCars { get; set; }
         public int NbOfCyclers { get; set; }
-        public int FrameNb { get; set; } // Frame number for which the analysys was created
+        public int FrameNb { get; set; } // Frame number for which the analysys was created 
 
     }
 }
