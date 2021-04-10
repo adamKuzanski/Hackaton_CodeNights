@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using InvigilationApp.Interfaces;
+using InvigilationApp.Repositories;
 
 namespace InvigilationApp
 {
@@ -26,6 +28,7 @@ namespace InvigilationApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSingleton<IMovieRepository, MovieRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
