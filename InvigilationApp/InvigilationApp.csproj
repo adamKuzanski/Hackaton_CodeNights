@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="uploads\" />
     <Folder Include="Services\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
