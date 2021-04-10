@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using InvigilationApp.Interfaces;
+using InvigilationApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -39,5 +40,27 @@ namespace InvigilationApp.Repositories
             return true;
         }
 
+        public Task<IList<FrameStats>> GetMovieStats(string movieName)
+        {
+            var rand = new Random();
+
+            var stats = new List<FrameStats>();
+            for (var i = 0; i < 20; i++)
+            {
+                var temp_stats = new FrameStats();
+                temp_stats.FrameNb = i;
+                temp_stats.NbOfCars = 2 - rand.Next(-2, 1);
+                temp_stats.NbOfCyclers = 3 - rand.Next(-3, 1);
+                temp_stats.NbOfPeopleOnImage = i * 2;
+                temp_stats.NbOfPeopleWithMask = i + 3;
+                temp_stats.NbOfPeopleWithOutMask =
+                    temp_stats.NbOfPeopleOnImage - temp_stats.NbOfPeopleWithMask - rand.Next(0, 5);
+
+                temp_stats.NbOfPeopleWithOutMask = Math.Abs(temp_stats.NbOfPeopleWithOutMask);
+                stats.Add(temp_stats);
+            }
+
+            return Task.FromResult<IList<FrameStats>>(stats);
+        }
     }
 }

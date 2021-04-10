@@ -7,8 +7,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using InvigilationApp.Interfaces;
+using InvigilationApp.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.WindowsAzure.Storage.Blob.Protocol;
 
 namespace InvigilationApp.Controllers
 {
@@ -28,7 +30,7 @@ namespace InvigilationApp.Controllers
 
         [HttpPost("uploadMovie")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadMovie(IFormFile file)
+        public async Task<IActionResult> PostUploadMovie(IFormFile file)
         {
             var uploads = Path.Combine(_hostingEnvironment.ContentRootPath, "uploads");
             var filePath = Path.Combine(uploads, file.FileName);
@@ -46,18 +48,27 @@ namespace InvigilationApp.Controllers
                 message = $"You FUCKED UP: File named {file.FileName} has been uploaded";
                 return BadRequest(message);
             }
-
-            //
-            //
-            // // await using (Stream fileStream = new FileStream(filePath, FileMode.Create))
-            // // {
-            // //     
-            // //     await file.CopyToAsync(fileStream);
-            // //     await fileStream.FlushAsync();
-            // // }
-            //
-            // message = $"File named {file.FileName} has been uploaded";
-            // return Ok(message);
         }
+
+        [HttpGet("analyseMove")]
+        public async Task<IActionResult> GetAnalyseMovie(string movieName)
+        {
+            var stats = await _movieRepository.GetMovieStats(movieName);
+
+            string message; 
+            var result = true;
+            if (result)
+            {
+                message = $"OK: Stats sent";
+                return Ok(stats);
+            }
+            else
+            {
+                message = $"You FUCKED UP";
+                return BadRequest(stats);
+            }
+        }
+
+
     }
 }
