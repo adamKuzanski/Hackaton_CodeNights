@@ -27,11 +27,26 @@ namespace InvigilationApp.Controllers
             return "value";
         }
 
-        // POST api/<UserController>
+        // POST api/user/registration
         [HttpPost("registration")]
         public async Task<IActionResult> PostRegisterUser([FromBody] User user)
         {
             return new OkObjectResult(user);
+        }
+
+        // POST api/user/login
+        [HttpPost("login")]
+        public async Task<IActionResult> PostLogInUser([FromBody] UserLogin user)
+        {
+            var userResponse = new UserServer
+            {
+                Email = user.Email,
+                Password = user.Password,
+                FirstName = "To do",
+                LastName = "To do",
+                Token = "fake-jwt-token"
+            };
+            return new OkObjectResult(userResponse);
         }
 
         // PUT api/<UserController>/5
