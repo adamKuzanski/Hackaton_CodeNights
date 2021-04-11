@@ -54,7 +54,7 @@ namespace InvigilationApp.Controllers
         [HttpGet("analyseMove")]
         public async Task<IActionResult> GetAnalyseMovie(string movieName)
         {
-            var stats = _movieRepository.GetMovieStats(movieName);
+            var stats = await _movieRepository.GetMovieStats(movieName);
 
             string message; 
             var result = true;

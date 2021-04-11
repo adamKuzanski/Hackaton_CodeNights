@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 using InvigilationApp.Interfaces;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Xabe.FFmpeg;
 
 namespace InvigilationApp.Repositories
 {
@@ -53,15 +55,72 @@ namespace InvigilationApp.Repositories
             return true;
         }
 
-        public FrameStats GetMovieStats(string movieName)
+        public async Task<FrameStats> GetMovieStats(string movieName)
         {
             var isMovieDownloaded = _movieService.DownloadMovie(movieName);
             var result = new FrameStats();
 
             if (isMovieDownloaded)
             {
-                var path = System.IO.Directory.GetCurrentDirectory();
-                path = Path.Combine(path, "downloads", $"{movieName}");
+                var path = Directory.GetCurrentDirectory();
+                var input_path = Path.Combine(path, "downloads", $"{movieName}");
+                // var output_path = Path.Combine(path, "uploads", $"{movieName}");
+                
+
+                try
+                {
+                    FFmpeg.SetExecutablesPath(Path.Combine(path, "ffmpeg"));
+
+                    var info = await FFmpeg.GetMediaInfo(input_path);
+                    var duration = info.Duration;
+
+                    // Iterujemy po filmie
+                    var samplingRate = 5;
+                    for (int sec = 0; sec < duration.Seconds; sec += samplingRate)
+                    {
+                        var output_path = Path.Combine(path, "uploads", $"snapshot_{sec}.png");
+
+                        var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(
+                            input_path, 
+                            output_path, 
+                            TimeSpan.FromSeconds(sec));
+
+                        var res = conversion.Start();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+                // Weź wszystkie obrazki z lokalizacji --> Przeanalizuj
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+
+                }
+
+
+
+
+                // var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(
+                //     input_path, output_path, TimeSpan.FromSeconds(2));
+                // var res = await conversion.Start();
+
+                // var info = await FFmpeg.GetMediaInfo(input_path);
+
+                // var videoStream = info.VideoStreams.First()
+                //     .SetCodec(VideoCodec.h264)
+                //     .SetSize(VideoSize.Hd480);
+                //
+                // await Conversion.New()
+                //     .AddStream(videoStream)
+                //     .SetOutput(output_path)
+                //     .Start();
+
                 using (var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
                     var frames = _movieService.GetFramesFromFile(fs);
