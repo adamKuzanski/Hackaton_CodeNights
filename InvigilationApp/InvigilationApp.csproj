@@ -6,12 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="uploads\" />
-    <Folder Include="Services\" />
+    <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="RestSharp" Version="105.2.3" />
+    <PackageReference Include="WindowsAzure.Storage" Version="7.2.1" />
+    <PackageReference Include="Xabe.FFmpeg" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="WindowsAzure.Storage" Version="7.2.1" />
+    <Folder Include="downloads\" />
+    <Folder Include="ffmpeg\" />
   </ItemGroup>
 
 

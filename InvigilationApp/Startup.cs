@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvigilationApp.Interfaces;
 using InvigilationApp.Repositories;
+using InvigilationApp.Services;
 
 namespace InvigilationApp
 {
@@ -27,7 +28,11 @@ namespace InvigilationApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.MaxDepth = 200;
+            }); ;
+            services.AddSingleton<IMovieService, MovieService>();
             services.AddSingleton<IMovieRepository, MovieRepository>();
         }
 

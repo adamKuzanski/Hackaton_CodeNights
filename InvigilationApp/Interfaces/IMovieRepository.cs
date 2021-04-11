@@ -11,7 +11,7 @@ namespace InvigilationApp.Interfaces
     public interface IMovieRepository
     {
         public Task<bool> UploadNewMovie(IFormFile file);
-        public Task<IList<FrameStats>> GetMovieStats(string movieName);
+        public Task<List<FrameStats>> GetMovieStats(string movieName);
         public Task<List<string>> GetAllMovieNames();
     }
 }
