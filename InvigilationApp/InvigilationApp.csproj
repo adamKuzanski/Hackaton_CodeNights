@@ -16,6 +16,7 @@
   <ItemGroup>
     <Folder Include="downloads\" />
     <Folder Include="ffmpeg\" />
+    <Folder Include="uploads\" />
   </ItemGroup>
 
 

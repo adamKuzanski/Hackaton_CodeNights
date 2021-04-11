@@ -30,9 +30,14 @@ namespace InvigilationApp.Services
         public bool DownloadMovie(string movieName)
         {
             using var client = new WebClient();
-            client.DownloadFile(Secrets.BlobUrl + movieName, $"downloads\\{movieName}");
 
-            return true;
+            var path = Directory.GetCurrentDirectory();
+            var file_path = Path.Combine(path, "downloads", $"{movieName}");
+
+            // client.DownloadFile(Secrets.BlobUrl + movieName, $"downloads\\{movieName}");
+            client.DownloadFile(Secrets.BlobUrl + movieName, file_path);
+            var a = client.BaseAddress;
+            return true; // CIEKAWE
         }
 
         public List<string> GetFramesFromFile(FileStream fs)

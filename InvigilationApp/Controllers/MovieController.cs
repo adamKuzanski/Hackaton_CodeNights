@@ -70,6 +70,25 @@ namespace InvigilationApp.Controllers
             }
         }
 
+        [HttpGet("analyseMoveRandom")]
+        public async Task<IActionResult> GetRandomAnalyseMovie(string movieName)
+        {
+            var stats = await _movieRepository.GetRandomMovieStats(movieName);
+
+            string message;
+            var result = true;
+            if (result)
+            {
+                message = $"OK: Stats sent";
+                return Ok(stats);
+            }
+            else
+            {
+                message = $"You FUCKED UP";
+                return BadRequest(stats);
+            }
+        }
+
         [HttpGet("allNames")]
         public async Task<IActionResult> GetAllMovieNames()
         {

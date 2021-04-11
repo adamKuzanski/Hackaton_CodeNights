@@ -55,6 +55,29 @@ namespace InvigilationApp.Repositories
             return true;
         }
 
+        public Task<IList<FrameStats>> GetRandomMovieStats(string movieName)
+        {
+            var rand = new Random();
+
+            var stats = new List<FrameStats>();
+            for (var i = 0; i < 20; i++)
+            {
+                var temp_stats = new FrameStats();
+                temp_stats.FrameNb = i;
+                temp_stats.NbOfCars = 2 - rand.Next(-2, 1);
+                temp_stats.NbOfCyclers = 3 - rand.Next(-3, 1);
+                temp_stats.NbOfPeopleOnImage = i * 2;
+                temp_stats.NbOfPeopleWithMask = i + 3;
+                temp_stats.NbOfPeopleWithOutMask =
+                    temp_stats.NbOfPeopleOnImage - temp_stats.NbOfPeopleWithMask - rand.Next(0, 5);
+
+                temp_stats.NbOfPeopleWithOutMask = Math.Abs(temp_stats.NbOfPeopleWithOutMask);
+                stats.Add(temp_stats);
+            }
+
+            return Task.FromResult<IList<FrameStats>>(stats);
+        }
+
         public async Task<List<FrameStats>> GetMovieStats(string movieName)
         {
             var isMovieDownloaded = _movieService.DownloadMovie(movieName);
@@ -74,7 +97,7 @@ namespace InvigilationApp.Repositories
                     var duration = info.Duration;
                 
                     // Iterujemy po filmie
-                    var samplingRate = 5;
+                    var samplingRate = 2;
                     for (int sec = 0; sec < duration.Seconds; sec += samplingRate)
                     {
                         var output_path = Path.Combine(path, "uploads", $"snapshot_{sec}.png");
@@ -99,7 +122,7 @@ namespace InvigilationApp.Repositories
                 {
                     var img_paths = Path.Combine(path, "uploads");
                     var allFiles = Directory.GetFiles(img_paths);
-
+                    var i = 0;
                     foreach (var filePath in allFiles)
                     {
                         var stat = new FrameStats();
@@ -109,6 +132,7 @@ namespace InvigilationApp.Repositories
                             stat = _movieService.GetFrameStats(fs);
                         }
                         File.Delete(filePath);
+                        stat.FrameNb = i++;
                         movieStats.Add(stat);
                     }
                 }
@@ -142,7 +166,13 @@ namespace InvigilationApp.Repositories
 
             }
 
-            return new List<FrameStats>();
+            var smsm = new List<FrameStats>();
+            var a = new FrameStats();
+            a.NbOfPeopleWithOutMask = 99;
+            smsm.Add(a);
+            return smsm;
+
+            // return new List<FrameStats>();
             // var path =
             //     $"C:\\Users\\adamk\\OneDrive\\Pulpit\\KODOWANIE\\Hackatony\\CodeNight\\InvigilationApp\\uploads\\7-min.PNG";
             //
