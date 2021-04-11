@@ -64,7 +64,7 @@ namespace InvigilationApp.Repositories
                 path = Path.Combine(path, "downloads", $"{movieName}");
                 using (var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    result = _movieService.GetFrameStats(fs);
+                    var frames = _movieService.GetFramesFromFile(fs);
                 }
 
             }
