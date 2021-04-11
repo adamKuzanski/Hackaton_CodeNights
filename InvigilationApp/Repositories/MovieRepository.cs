@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using InvigilationApp.Interfaces;
 using InvigilationApp.Models;
@@ -12,8 +14,17 @@ namespace InvigilationApp.Repositories
 {
     public class MovieRepository : IMovieRepository
     {
+
+        private readonly IMovieService _movieService;
         private static readonly string ConnectionString = Secrets.BlobConnectionString;
         public static string BlobContainer = "movies";
+
+        public MovieRepository(IMovieService movieService)
+        {
+            _movieService = movieService;
+        }
+
+
 
         public async Task<bool> UploadNewMovie(IFormFile movie)
         {
@@ -40,27 +51,20 @@ namespace InvigilationApp.Repositories
             return true;
         }
 
-        public Task<IList<FrameStats>> GetMovieStats(string movieName)
+        public FrameStats GetMovieStats(string movieName)
         {
-            var rand = new Random();
+            var path =
+                $"C:\\Users\\adamk\\OneDrive\\Pulpit\\KODOWANIE\\Hackatony\\CodeNight\\InvigilationApp\\uploads\\7-min.PNG";
 
-            var stats = new List<FrameStats>();
-            for (var i = 0; i < 20; i++)
+            var result = new FrameStats();
+            // Open the stream and read it back.
+            using (var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
             {
-                var temp_stats = new FrameStats();
-                temp_stats.FrameNb = i;
-                temp_stats.NbOfCars = 2 - rand.Next(-2, 1);
-                temp_stats.NbOfCyclers = 3 - rand.Next(-3, 1);
-                temp_stats.NbOfPeopleOnImage = i * 2;
-                temp_stats.NbOfPeopleWithMask = i + 3;
-                temp_stats.NbOfPeopleWithOutMask =
-                    temp_stats.NbOfPeopleOnImage - temp_stats.NbOfPeopleWithMask - rand.Next(0, 5);
-
-                temp_stats.NbOfPeopleWithOutMask = Math.Abs(temp_stats.NbOfPeopleWithOutMask);
-                stats.Add(temp_stats);
+                result = _movieService.GetFrameStats(fs);
             }
 
-            return Task.FromResult<IList<FrameStats>>(stats);
+            return result;
+            // return Task.FromResult<IList<FrameStats>>(stats);
         }
 
         public async Task<List<string>> GetAllMovieNames()

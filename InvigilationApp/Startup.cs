@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvigilationApp.Interfaces;
 using InvigilationApp.Repositories;
+using InvigilationApp.Services;
 
 namespace InvigilationApp
 {
@@ -28,6 +29,7 @@ namespace InvigilationApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSingleton<IMovieService, MovieService>();
             services.AddSingleton<IMovieRepository, MovieRepository>();
         }
 
