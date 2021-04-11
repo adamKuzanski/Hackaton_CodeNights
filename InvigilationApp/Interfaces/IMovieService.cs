@@ -11,5 +11,7 @@ namespace InvigilationApp.Interfaces
     public interface IMovieService
     {
         public FrameStats GetFrameStats(Stream imageStream);
+        public bool DownloadMovie(string movieName);
+        public List<string> GetFramesFromFile(FileStream fs);
     }
 }

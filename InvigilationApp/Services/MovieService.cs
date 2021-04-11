@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -24,6 +25,20 @@ namespace InvigilationApp.Services
         {
             var predictions = GetPredictions(imageStream).Result;
             return ProceedPredictions(predictions);
+        }
+
+        public bool DownloadMovie(string movieName)
+        {
+            using var client = new WebClient();
+            client.DownloadFile(Secrets.BlobUrl + movieName, $"downloads\\{movieName}");
+
+            return true;
+        }
+
+        public List<string> GetFramesFromFile(FileStream fs)
+        {
+            // to do: Extract frames from video
+            throw new NotImplementedException();
         }
 
         private FrameStats ProceedPredictions(Predictions predictions)
