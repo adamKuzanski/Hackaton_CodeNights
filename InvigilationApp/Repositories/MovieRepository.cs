@@ -55,7 +55,7 @@ namespace InvigilationApp.Repositories
             return true;
         }
 
-        public async Task<FrameStats> GetMovieStats(string movieName)
+        public async Task<List<FrameStats>> GetMovieStats(string movieName)
         {
             var isMovieDownloaded = _movieService.DownloadMovie(movieName);
             var result = new FrameStats();
@@ -65,26 +65,25 @@ namespace InvigilationApp.Repositories
                 var path = Directory.GetCurrentDirectory();
                 var input_path = Path.Combine(path, "downloads", $"{movieName}");
                 // var output_path = Path.Combine(path, "uploads", $"{movieName}");
-                
 
                 try
                 {
                     FFmpeg.SetExecutablesPath(Path.Combine(path, "ffmpeg"));
-
+                
                     var info = await FFmpeg.GetMediaInfo(input_path);
                     var duration = info.Duration;
-
+                
                     // Iterujemy po filmie
                     var samplingRate = 5;
                     for (int sec = 0; sec < duration.Seconds; sec += samplingRate)
                     {
                         var output_path = Path.Combine(path, "uploads", $"snapshot_{sec}.png");
-
+                
                         var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(
                             input_path, 
                             output_path, 
                             TimeSpan.FromSeconds(sec));
-
+                
                         var res = conversion.Start();
                     }
                 }
@@ -94,16 +93,31 @@ namespace InvigilationApp.Repositories
                 }
 
                 // Weź wszystkie obrazki z lokalizacji --> Przeanalizuj
+                
+                var movieStats = new List<FrameStats>();
                 try
                 {
+                    var img_paths = Path.Combine(path, "uploads");
+                    var allFiles = Directory.GetFiles(img_paths);
 
+                    foreach (var filePath in allFiles)
+                    {
+                        var stat = new FrameStats();
+                        // Open the stream and read it back.
+                        using (var fs = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
+                        {
+                            stat = _movieService.GetFrameStats(fs);
+                        }
+                        File.Delete(filePath);
+                        movieStats.Add(stat);
+                    }
                 }
                 catch (Exception e)
                 {
-
+                    Console.WriteLine(e.Message);
                 }
 
-
+                return movieStats;
 
 
                 // var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(
@@ -121,13 +135,14 @@ namespace InvigilationApp.Repositories
                 //     .SetOutput(output_path)
                 //     .Start();
 
-                using (var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
-                {
-                    var frames = _movieService.GetFramesFromFile(fs);
-                }
+                // using (var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
+                // {
+                //     var frames = _movieService.GetFramesFromFile(fs);
+                // }
 
             }
 
+            return new List<FrameStats>();
             // var path =
             //     $"C:\\Users\\adamk\\OneDrive\\Pulpit\\KODOWANIE\\Hackatony\\CodeNight\\InvigilationApp\\uploads\\7-min.PNG";
             //
@@ -138,7 +153,6 @@ namespace InvigilationApp.Repositories
             //     result = _movieService.GetFrameStats(fs);
             // }
 
-            return result;
             // return Task.FromResult<IList<FrameStats>>(stats);
         }
 
